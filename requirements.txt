@@ -20,6 +20,7 @@ jsonschema==4.23.0
 jsonschema-specifications==2024.10.1
 keras==3.6.0
 libclang==18.1.1
+loguru==0.7.2
 Markdown==3.7
 markdown-it-py==3.0.0
 MarkupSafe==3.0.2
