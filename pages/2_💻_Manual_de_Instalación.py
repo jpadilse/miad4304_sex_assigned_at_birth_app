@@ -56,7 +56,7 @@ st.markdown(
 		
 		4. Inicia la aplicación del proyecto con Streamlit:
 		   ```bash
-		   streamlit run streamlit_app.py --server.port 8501
+		   streamlit run 🚻_Inicio.py --server.port 8501
 		   ```
 		
 		5. Abre tu navegador y accede a la URL correspondiente:
