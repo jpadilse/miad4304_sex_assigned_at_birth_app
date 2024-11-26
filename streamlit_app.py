@@ -116,19 +116,6 @@ def display_prediction_results(prediction: float):
 	)
 	st.progress(prediction if is_male else 1 - prediction)
 
-def show_model_explanation():
-	"""Display the model explanation section."""
-	with st.expander("📖 ¿Cómo funciona?"):
-		st.write(
-			"""
-			Este modelo utiliza redes neuronales para analizar patrones en los caracteres del nombre:
-			- Analiza la secuencia de letras y patrones comunes en nombres
-			- Compara con patrones aprendidos de miles de nombres etiquetados
-			- Genera una predicción basada en similitudes estadísticas
-			- La confianza indica qué tan seguro está el modelo de su predicción
-			"""
-		)
-
 def show_footer():
 	"""Display the footer section."""
 	st.markdown("---")
@@ -185,7 +172,6 @@ def main():
 
 		if prediction is not None:
 			display_prediction_results(prediction)
-			show_model_explanation()
 		else:
 			st.error("No se pudo realizar la predicción. Por favor, inténtalo de nuevo.")
 
