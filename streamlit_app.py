@@ -29,14 +29,33 @@ CUSTOM_CSS = """
 
 @st.cache_resource
 def load_model(model_path: Path) -> Optional[tf.keras.Model]:
-	"""Load the Keras model with error handling."""
-	try:
-		model = tf.keras.models.load_model(str(model_path))
-		logger.info("Model loaded successfully")
-		return model
-	except Exception as e:
-		logger.error(f"Error loading model: {e}")
-		return None
+    """Load the Keras model with error handling and custom layer registration."""
+    try:
+        # Define the custom layer explicitly for loading
+        class OneHotLayer(tf.keras.layers.Layer):
+            def __init__(self, vocab_size: int, **kwargs):
+                super().__init__(**kwargs)
+                self.vocab_size = vocab_size
+
+            def call(self, inputs: tf.Tensor) -> tf.Tensor:
+                return tf.one_hot(inputs, self.vocab_size)
+
+            def get_config(self) -> dict:
+                config = super().get_config()
+                config.update({"vocab_size": self.vocab_size})
+                return config
+
+        # Register the custom layer
+        tf.keras.utils.get_custom_objects()['OneHotLayer'] = OneHotLayer
+        
+        # Load the model
+        model = tf.keras.models.load_model(str(model_path), 
+            custom_objects={'OneHotLayer': OneHotLayer})
+        logger.info("Model loaded successfully")
+        return model
+    except Exception as e:
+        logger.error(f"Error loading model: {e}")
+        return None
 
 def predict_gender(name: str, model: tf.keras.Model) -> Optional[float]:
 	"""Generate gender prediction and confidence from a name."""
