@@ -12,9 +12,11 @@ faq_items = [
 	{
 		"question": "¿Cómo funciona el modelo?",
 		"answer": """
-        - Análisis de patrones de letras en nombres.
-        - Comparación con una base de datos extensa.
-        - Predicción estadística basada en machine learning.
+        Este modelo utiliza redes neuronales para analizar patrones en los caracteres del nombre:
+			- Analiza la secuencia de letras y patrones comunes en nombres
+			- Compara con patrones aprendidos de miles de nombres etiquetados
+			- Genera una predicción basada en similitudes estadísticas
+			- La confianza indica qué tan seguro está el modelo de su predicción
         """
 	},
 	{
