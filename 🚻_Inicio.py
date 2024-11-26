@@ -1,9 +1,7 @@
-import pandas as pd
 import streamlit as st
 import tensorflow as tf
 from typing import Optional, Tuple
 from pathlib import Path
-
 from loguru import logger
 
 # Constants
@@ -11,7 +9,7 @@ MODEL_PATH = Path("./models/model.keras")
 MIN_NAME_LENGTH = 2
 MAX_NAME_LENGTH = 50
 
-# Custom CSS
+# Custom CSS for styling
 CUSTOM_CSS = """
     <style>
     .main {
@@ -29,33 +27,34 @@ CUSTOM_CSS = """
 
 @st.cache_resource
 def load_model(model_path: Path) -> Optional[tf.keras.Model]:
-    """Load the Keras model with error handling and custom layer registration."""
-    try:
-        # Define the custom layer explicitly for loading
-        class OneHotLayer(tf.keras.layers.Layer):
-            def __init__(self, vocab_size: int, **kwargs):
-                super().__init__(**kwargs)
-                self.vocab_size = vocab_size
+	"""Load the Keras model with error handling and custom layer registration."""
+	try:
+		class OneHotLayer(tf.keras.layers.Layer):
+			"""Custom layer for one-hot encoding."""
+			def __init__(self, vocab_size: int, **kwargs):
+				super().__init__(**kwargs)
+				self.vocab_size = vocab_size
 
-            def call(self, inputs: tf.Tensor) -> tf.Tensor:
-                return tf.one_hot(inputs, self.vocab_size)
+			def call(self, inputs: tf.Tensor) -> tf.Tensor:
+				return tf.one_hot(inputs, self.vocab_size)
 
-            def get_config(self) -> dict:
-                config = super().get_config()
-                config.update({"vocab_size": self.vocab_size})
-                return config
+			def get_config(self) -> dict:
+				config = super().get_config()
+				config.update({"vocab_size": self.vocab_size})
+				return config
 
-        # Register the custom layer
-        tf.keras.utils.get_custom_objects()['OneHotLayer'] = OneHotLayer
-        
-        # Load the model
-        model = tf.keras.models.load_model(str(model_path), 
-            custom_objects={'OneHotLayer': OneHotLayer})
-        logger.info("Model loaded successfully")
-        return model
-    except Exception as e:
-        logger.error(f"Error loading model: {e}")
-        return None
+		# Register the custom layer
+		tf.keras.utils.get_custom_objects()['OneHotLayer'] = OneHotLayer
+
+		# Load the model
+		model = tf.keras.models.load_model(
+				str(model_path), custom_objects={'OneHotLayer': OneHotLayer}
+		)
+		logger.info("Model loaded successfully")
+		return model
+	except Exception as e:
+		logger.error(f"Error loading model: {e}")
+		return None
 
 def predict_gender(name: str, model: tf.keras.Model) -> Optional[float]:
 	"""Generate gender prediction and confidence from a name."""
@@ -63,7 +62,8 @@ def predict_gender(name: str, model: tf.keras.Model) -> Optional[float]:
 		return None
 
 	try:
-		input_tensor = tf.convert_to_tensor(pd.Series([name]))
+		# Preprocess input
+		input_tensor = tf.convert_to_tensor([name])
 		prediction = model.predict(input_tensor, verbose=0)
 		return float(prediction[0][0])
 	except Exception as e:
@@ -84,34 +84,31 @@ def validate_name(name: str) -> Tuple[bool, str]:
 
 def display_prediction_results(prediction: float):
 	"""Display prediction results with styled components."""
-	# Create columns for results
 	col1, col2 = st.columns(2)
 
-	# Calculate confidence
 	is_male = prediction >= 0.5
 	confidence = prediction * 100 if is_male else (1 - prediction) * 100
 	gender_icon = "👨" if is_male else "👩"
 	gender_text = "Hombre" if is_male else "Mujer"
 
-	# Display results with styling
 	with col1:
-		st.markdown(f"### Género Predicho")
+		st.markdown("### Género Predicho")
 		st.markdown(f"### {gender_icon} {gender_text}")
 
 	with col2:
 		st.markdown("### Nivel de Confianza")
 		st.markdown(f"### {confidence:.1f}%")
 
-	# Confidence bar with color
+	# Confidence bar with custom color
 	bar_color = "blue" if is_male else "pink"
 	st.markdown(
 			f"""
-			<style>
-			.stProgress > div > div > div > div {{
-				background-color: {bar_color};
-			}}
-			</style>
-			""",
+        <style>
+        .stProgress > div > div > div > div {{
+            background-color: {bar_color};
+        }}
+        </style>
+        """,
 			unsafe_allow_html=True
 	)
 	st.progress(prediction if is_male else 1 - prediction)
@@ -124,13 +121,14 @@ def show_footer():
 			<div style='text-align: center; color: #666;'>
 			<p><em>⚠️ Nota: Este modelo utiliza aprendizaje automático y sus predicciones están basadas en datos históricos. 
 			Los resultados son estimaciones estadísticas y no deben considerarse como definitivos.</em></p>
-			<p>Versión 1.0 | Desarrollado️ usando Streamlit</p>
+			<p>Versión 1.0 | Desarrollado usando Streamlit</p>
 			</div>
 			""",
 			unsafe_allow_html=True
 	)
 
 def main():
+	"""Main function to run the Streamlit app."""
 	# Page configuration
 	st.set_page_config(
 			page_title="Predicción de Género por Nombre",
