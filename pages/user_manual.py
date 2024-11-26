@@ -14,12 +14,15 @@ def render_user_manual():
 	st.sidebar.header("📖 Manual de Usuario")
 
 	# Introduction text
-	st.write("""
-    🎉 Bienvenido a nuestra herramienta de predicción de género por nombre. 
-    Esta aplicación utiliza técnicas de aprendizaje automático para predecir 
-    el género más probable asociado a un nombre.
-    """)
+	st.write(
+			"""
+			🎉 Bienvenido a nuestra herramienta de predicción de género por nombre. 
+			Esta aplicación utiliza técnicas de aprendizaje profundo para predecir 
+			el género más probable asociado a un nombre.
+			"""
+	)
 
+	st.sidebar.header("📖 PRUEBA")
 	# Detailed sections
 	st.markdown("## ✨ Características Principales")
 	st.markdown("""
