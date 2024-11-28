@@ -1,5 +1,7 @@
 # 👩‍💻 Predicción de Género por Nombre 🧑‍💻
 
+[![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://miad-gender-assigned-at-birth-app-2347.streamlit.app/)
+
 ## 🌟 Descripción del Proyecto
 
 Esta aplicación web utiliza técnicas de aprendizaje profundo para predecir el género más probable asociado a un nombre.
